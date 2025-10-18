@@ -77,7 +77,7 @@ def improved_multiscale_dispersion_entropy(x, m, tau, c, Smax):
     x = np.asarray(x)
     emde = []
 
-    # Paso 1: escala t = 1
+    # Paso 1: escala tsu = 1
     try:
         ent = entropy_dispersion(x, m, tau, c)
     except ValueError:
@@ -86,18 +86,18 @@ def improved_multiscale_dispersion_entropy(x, m, tau, c, Smax):
     emde.append(ent)
 
     # Paso 2: escalas t = 2 hasta Smax
-    for t in range(2, Smax + 1):
+    for i in range(2, Smax + 1):
         entropias = []
 
-        for k in range(t):
+        for k in range(i):
             subSerie = x[k:]
-            T = len(subSerie) // t
+            Tt = len(subSerie) // i
 
-            if T == 0:
+            if t == 0:
                 continue  # Evita subseries vacías
 
-            # Promediar ventanas de tamaño t
-            promedio = [np.mean(subSerie[j * t : (j + 1) * t]) for j in range(T)]
+            # Promediar ventanas
+            promedio = [np.mean(subSerie[j * i : (j + 1) * i]) for j in range(t)]
 
             # Calcular entropía de dispersión
             try:
@@ -107,7 +107,7 @@ def improved_multiscale_dispersion_entropy(x, m, tau, c, Smax):
 
             entropias.append(ent_k)
 
-        # Calcular entropía promedio de la escala t
+        # Calcular entropía promedio
         if entropias:
             emde.append(np.mean(entropias))
         else:
@@ -174,27 +174,27 @@ def improved_multiscale_permutation_entropy(x, m, tau, Smax):
     x = np.asarray(x)
     empe = []
 
-    # Paso 1: escala t = 1
+    # Paso 1: escala tau = 1
     try:
         ent = entropy_permuta(x, m, tau)
     except ValueError:
         ent = 0
-        
+
     empe.append(ent)
 
     # Paso 2: escalas t = 2 hasta Smax
-    for t in range(2, Smax + 1):
+    for i in range(2, Smax + 1):
         entropias = []
 
-        for k in range(t):
+        for k in range(i):
             subSerie = x[k:]
-            T = len(subSerie) // t
+            t = len(subSerie) // i
 
-            if T == 0:
+            if t == 0:
                 continue  # Evita subseries vacías
 
-            # Promediar ventanas de tamaño t
-            promedio = [np.mean(subSerie[j * t : (j + 1) * t]) for j in range(T)]
+            # Promediar ventanas
+            promedio = [np.mean(subSerie[j * i : (j + 1) * i]) for j in range(t)]
 
             # Calcular entropía de permutación
             try:
@@ -204,7 +204,7 @@ def improved_multiscale_permutation_entropy(x, m, tau, Smax):
 
             entropias.append(ent_k)
 
-        # Calcular entropía promedio de la escala t
+        # Calcular entropía promedio
         if entropias:
             empe.append(np.mean(entropias))
         else:
