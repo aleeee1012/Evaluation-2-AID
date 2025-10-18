@@ -1,7 +1,6 @@
 # My Utility : auxiliars functions
 import pandas as pd
 import numpy  as np
-import math
 
 # Residual-Dispersion Entropy
 def entropy_dispersion(x, d, tau, c):
@@ -90,7 +89,7 @@ def entropy_permuta(x, m, tau):
     df = pd.Series(patterns)# Paso 3
     freq = df.value_counts(normalize=True)
     entr = -np.sum(freq * np.log2(freq))# Paso 4
-    n_entr = entr / np.log2(np.math.factorial(m))  # 5a
+    n_entr = entr / np.log2(np.prod(np.arange(1, m + 1)))  # 5a
     return(n_entr)
 
 # -------------------------------------------------------------------------------------
