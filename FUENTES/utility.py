@@ -17,7 +17,9 @@ def entropy_dispersion(x, d, tau, c):
         window = x_norm[i : i + tau * d : tau]
         embeddings.append(window)
 
-    y = [np.round(c * emb + 0.5).astype(int) for emb in embeddings]# Paso 3
+    #y = [np.round(c * emb + 0.5).astype(int) for emb in embeddings]# Paso 3
+    # El uso de np.clip limita al rango [1, c].
+    y = [np.clip(np.round(c * emb + 0.5), 1, c).astype(int) for emb in embeddings]
     pattern = []# Paso 4
 
     for s in y:
@@ -67,6 +69,51 @@ def multiscale_dispersion_entropy(x, m, tau, c, Smax):
             features.append(0)  # Para indicar que no se pudo calcular
 
     return np.array(features)
+
+# -------------------------------------------------------------------------------------
+
+# Entropía Dispersión Multiescala Mejorada (eMDE)
+def improved_multiscale_dispersion_entropy(x, m, tau, c, Smax):
+    x = np.asarray(x)
+    emde = []
+
+    # Paso 1: escala t = 1
+    try:
+        ent = entropy_dispersion(x, m, tau, c)
+    except ValueError:
+        ent = 0
+
+    emde.append(ent)
+
+    # Paso 2: escalas t = 2 hasta Smax
+    for t in range(2, Smax + 1):
+        entropias = []
+
+        for k in range(t):
+            subSerie = x[k:]
+            T = len(subSerie) // t
+
+            if T == 0:
+                continue  # Evita subseries vacías
+
+            # Promediar ventanas de tamaño t
+            promedio = [np.mean(subSerie[j * t : (j + 1) * t]) for j in range(T)]
+
+            # Calcular entropía de dispersión
+            try:
+                ent_k = entropy_dispersion(promedio, m, tau, c)
+            except ValueError:
+                ent_k = 0
+
+            entropias.append(ent_k)
+
+        # Calcular entropía promedio de la escala t
+        if entropias:
+            emde.append(np.mean(entropias))
+        else:
+            emde.append(0)
+
+    return np.array(emde)
 
 # -------------------------------------------------------------------------------------
 
@@ -122,21 +169,45 @@ def multiscale_permutation_entropy(x, m , tau, Smax):
 
 # -------------------------------------------------------------------------------------
 
-# Entropía permutación Multiescala Mejorada
-def improved_multiscale_permutation_entropy():
-    return 0
+# Entropía Permutación Multiescala Mejorada (eMPE)
+def improved_multiscale_permutation_entropy(x, m, tau, Smax):
+    x = np.asarray(x)
+    empe = []
 
-x = np.linspace(10, 1, 30)  # 30 muestras descendentes
-m = 3
-tau = 1
-c = 3
-Smax = 4
+    # Paso 1: escala t = 1
+    try:
+        ent = entropy_permuta(x, m, tau)
+    except ValueError:
+        ent = 0
+        
+    empe.append(ent)
 
-result = multiscale_dispersion_entropy(x, m, tau, c, Smax)
-print(result)
+    # Paso 2: escalas t = 2 hasta Smax
+    for t in range(2, Smax + 1):
+        entropias = []
 
+        for k in range(t):
+            subSerie = x[k:]
+            T = len(subSerie) // t
 
-result2 = multiscale_permutation_entropy(x, m, tau, Smax)
-print(result2)
+            if T == 0:
+                continue  # Evita subseries vacías
 
-print(entropy_permuta(x, m=3, tau=1))
+            # Promediar ventanas de tamaño t
+            promedio = [np.mean(subSerie[j * t : (j + 1) * t]) for j in range(T)]
+
+            # Calcular entropía de permutación
+            try:
+                ent_k = entropy_permuta(promedio, m, tau)
+            except ValueError:
+                ent_k = 0
+
+            entropias.append(ent_k)
+
+        # Calcular entropía promedio de la escala t
+        if entropias:
+            empe.append(np.mean(entropias))
+        else:
+            empe.append(0)
+
+    return np.array(empe)
