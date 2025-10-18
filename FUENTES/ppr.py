@@ -20,7 +20,7 @@ def conf_entropy():
     elif opt_code == 4:
         opt = 'permutación-mejorada'
     else:
-        raise ValueError(f"conf_ppr.csv: opción de entropía inválida ({opt_code}). Debe ser 1, 2, 3 o 4.")
+        raise ValueError(f"conf_ppr.csv: opción de entropía inválida ({opt_code}). Elija entre las siguientes opciones de Entropía Multi-escala: 1.- Dispersión | 2.- Dispersión Mejorada | 3.- Permutación | 4.- Permutación Mejorada")
     
     lF = int(config[1]) # Longitud del segmento
     d = int(config[2]) # Dimensión embebida
@@ -44,15 +44,79 @@ def load_data():
     return data1, data2 , data3, data4
 
 # Obtain Features by use Entropy    
-def gets_features():
+def gets_features(opt, lF, d, tau, c, Smax, all_data):
+    all_features = []
+    all_labels = []
     
-    return(F)
+    # Mapeo a etiquetas 
+    labels_map = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+
+    # Itera sobre cada set
+    for class_idx, class_data in enumerate(all_data):
+        print(f"\nProcesando Clase #{class_idx + 1}...")
+
+        # Itera sobre cada muestra dentro de un archivo
+        for sample_idx in range(class_data.shape[1]):
+            sample_series = class_data[:, sample_idx]
+            
+            # Segmenta
+            n_segments = len(sample_series) // lF
+            
+            # Procesa cada segmento
+            for seg_idx in range(n_segments):
+                segment = sample_series[seg_idx * lF : (seg_idx + 1) * lF]
+                features_vector = []
+                
+                # Multi escala
+                for scale in range(1, Smax + 1):
+                    # Crear la serie para la escala actual
+                    len_coarse = len(segment) // scale
+                    scaled_series = segment[:len_coarse * scale].reshape(len_coarse, scale).mean(axis=1)
+                    
+                    entropy_val = 0
+                    try:
+                        if opt == 'dispersion':
+                            entropy_val = dispersion(scaled_series, d=d, tau=tau, c=c)
+                        elif opt == 'dispersion-mejorada':
+
+                            entropy_val = dispersion_mejorada(scaled_series, d=d, tau=tau, c=c)
+                        elif opt == 'permutación':
+
+                            entropy_val = permutacion(scaled_series, m=d, tau=tau)
+                        elif opt == 'permutación-mejorada':
+
+                            entropy_val = permutacion_mejorada(scaled_series, m=d, tau=tau)
+                            
+                    except ValueError:
+                        entropy_val = 0
+
+                    features_vector.append(entropy_val)
+                
+                all_features.append(features_vector)
+                all_labels.append(labels_map[class_idx])
+    
+    F = pd.DataFrame(all_features)
+    L = pd.DataFrame(all_labels)
+
+    return F, L
 
 # Beginning ...
 def main():
+    # Cargar Configuración
     opt, lF, d, tau, c, Smax = conf_entropy()
+
+    # Cargar data
     data1, data2 , data3, data4 = load_data()
-    x = gets_features()
+
+    # Lista para datas
+    all_data = [data1, data2, data3, data4]
+
+    F, L = gets_features(opt, lF, d, tau, c, Smax, all_data)
+
+    # Guarda archivos (clase y label)
+    F.to_csv('dClases.csv', index=False, header=False)
+    L.to_csv('dLabel.csv', index=False, header=False)
+
 
 if __name__ == '__main__':   
 	 main()

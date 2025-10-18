@@ -5,7 +5,7 @@ import pandas as pd
 import numpy  as np
 
 # CResidual-Dispersion Entropy
-def entropy_dispersion(x,d,tau,c):
+def dispersion(x,d,tau,c):
     
     # Parametros
     x = np.asarray(x)
@@ -49,8 +49,16 @@ def entropy_dispersion(x,d,tau,c):
 
     return(n_enter)
 
+# -------------------------------------------------------------------------------------
+
+# Dispersión Mejorada
+def dispersion_mejorada():
+    return 0
+
+# -------------------------------------------------------------------------------------
+
 # Permutation Entropy
-def entropy_permuta(x, m, tau):
+def permutacion(x, m, tau):
 
     # Parametros
     x = np.asarray(x)
@@ -77,3 +85,8 @@ def entropy_permuta(x, m, tau):
     n_entr = entr / np.log2(np.math.factorial(m))  # 5a Entropía normalización
 
     return(n_entr)
+
+# -------------------------------------------------------------------------------------
+
+def permutacion_mejorada():
+    return 0
