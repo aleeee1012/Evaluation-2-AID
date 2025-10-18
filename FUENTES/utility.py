@@ -4,7 +4,7 @@
 import pandas as pd
 import numpy  as np
 
-# CResidual-Dispersion Entropy
+# Residual-Dispersion Entropy
 def dispersion(x,d,tau,c):
     
     # Parametros
