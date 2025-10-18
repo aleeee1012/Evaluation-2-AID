@@ -4,7 +4,7 @@
 
 import pandas  as pd
 import numpy   as np
-from utility   import *
+from utility   import (multiscale_dispersion_entropy, improved_multiscale_dispersion_entropy, multiscale_permutation_entropy, improved_multiscale_permutation_entropy)
 
 # Carga parametros del "Conf_ppr.csv"
 def conf_entropy():
@@ -68,33 +68,25 @@ def gets_features(opt, lF, d, tau, c, Smax, all_data):
                 features_vector = []
                 
                 # Multi escala
-                for scale in range(1, Smax + 1):
-                    # Crear la serie para la escala actual
-                    len_coarse = len(segment) // scale
-                    scaled_series = segment[:len_coarse * scale].reshape(len_coarse, scale).mean(axis=1)
-                    
-                    entropy_val = 0
-                    try:
-                        if opt == 'dispersion':
-                            entropy_val = dispersion(scaled_series, d=d, tau=tau, c=c)
-                        elif opt == 'dispersion-mejorada':
+                try:
+                    if opt == 1: # Dispersión
+                        features_vector = multiscale_dispersion_entropy(segment, Smax, m=d, tau=tau, c=c)
+                    elif opt == 2: # Dispersión Mejorada
+                        features_vector = improved_multiscale_dispersion_entropy(segment, Smax, m=d, tau=tau, c=c)
+                    elif opt == 3: # Permutación
+                        features_vector = multiscale_permutation_entropy(segment, Smax, m=d, tau=tau)
+                    elif opt == 4: # Permutación Mejorada
+                        features_vector = improved_multiscale_permutation_entropy(segment, Smax, m=d, tau=tau)
+                    else:
+                        raise ValueError(f"Opción de entropía inválida: {opt}")
 
-                            entropy_val = dispersion_mejorada(scaled_series, d=d, tau=tau, c=c)
-                        elif opt == 'permutación':
+                except ValueError as e:
+                    print(f"Error al calcular entropía para un segmento: {e}.")
+                    exit
 
-                            entropy_val = permutacion(scaled_series, m=d, tau=tau)
-                        elif opt == 'permutación-mejorada':
-
-                            entropy_val = permutacion_mejorada(scaled_series, m=d, tau=tau)
-                            
-                    except ValueError:
-                        entropy_val = 0
-
-                    features_vector.append(entropy_val)
-                
                 all_features.append(features_vector)
                 all_labels.append(labels_map[class_idx])
-    
+
     F = pd.DataFrame(all_features)
     L = pd.DataFrame(all_labels)
 
