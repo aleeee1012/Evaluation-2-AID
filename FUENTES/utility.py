@@ -91,7 +91,7 @@ def improved_multiscale_dispersion_entropy(x, m, tau, c, Smax):
 
         for k in range(i):
             subSerie = x[k:]
-            Tt = len(subSerie) // i
+            t = len(subSerie) // i
 
             if t == 0:
                 continue  # Evita subseries vacías
