@@ -69,24 +69,27 @@ def gets_features(opt, lF, d, tau, c, Smax, all_data):
                 
                 # Multi escala
                 try:
-                    if opt == 1: # Dispersión
-                        features_vector = multiscale_dispersion_entropy(segment, Smax, m=d, tau=tau, c=c)
-                    elif opt == 2: # Dispersión Mejorada
-                        features_vector = improved_multiscale_dispersion_entropy(segment, Smax, m=d, tau=tau, c=c)
-                    elif opt == 3: # Permutación
-                        features_vector = multiscale_permutation_entropy(segment, Smax, m=d, tau=tau)
-                    elif opt == 4: # Permutación Mejorada
-                        features_vector = improved_multiscale_permutation_entropy(segment, Smax, m=d, tau=tau)
+                    if opt == 'dispersion':
+                        features_vector = multiscale_dispersion_entropy(segment, m=d, tau=tau, c=c, Smax=Smax)
+                    elif opt == 'dispersion-mejorada':
+                        features_vector = improved_multiscale_dispersion_entropy(segment, m=d, tau=tau, c=c, Smax=Smax)
+                    elif opt == 'permutación':
+                        features_vector = multiscale_permutation_entropy(segment, m=d, tau=tau, Smax=Smax)
+                    elif opt == 'permutación-mejorada':
+                        features_vector = improved_multiscale_permutation_entropy(segment, m=d, tau=tau, Smax=Smax)
                     else:
                         raise ValueError(f"Opción de entropía inválida: {opt}")
 
                 except ValueError as e:
                     print(f"Error al calcular entropía para un segmento: {e}.")
-                    exit
+                    continue # Usamos continue para saltar al siguiente segmento
 
                 all_features.append(features_vector)
                 all_labels.append(labels_map[class_idx])
 
+        print(f"Clase #{class_idx + 1} procesada.")
+
+    print("Todas las clases han sido procesadas correctamente.")
     F = pd.DataFrame(all_features)
     L = pd.DataFrame(all_labels)
 
