@@ -41,32 +41,25 @@ def multiscale_dispersion_entropy(x, m, tau, c, Smax):
     n = len(x)
     features = []
 
-    # Paso 1: escala t = 1
+    # Iterar sobre cada escala desde 1 hasta smax
+    for i in range(1, Smax + 1):
+        t = n // i
 
-    de = entropy_dispersion(x, m, tau, c)
-    features.append(de)
-
-    # Paso 2: escalas t = 2 hasta Smax
-    for i in range(2, Smax + 1):
-        entropias = []
-
-        for k in range(i):
-            subSerie = x[k:]
-            t = len(subSerie) // i
-
-            if t == 0:
-                continue # Evita subseries vacías (division por cero)
-
-            promedio = [np.mean(subSerie[j * i : (j + 1) * i]) for j in range(t)]
-
-            # Calcular Entropía de Dispersión
-            de_Promedio = entropy_dispersion(promedio, m, tau, c)
-            entropias.append(de_Promedio)
+        if t == 0:
+            features.append(0)
+            continue  # Evita subseries vacías
         
-        if entropias:
-            features.append(np.mean(entropias))
-        else:
-            features.append(0)  # Para indicar que no se pudo calcular
+        # Paso 1: Crear la serie coarse-grained
+        # Se crea una única serie promediada por escala.
+        y = [np.mean(x[j * i: (j + 1) * i]) for j in range(t)]
+
+        # Paso 2: Calcular la Entropía de Dispersión para la serie promediada
+        try:
+            de = entropy_dispersion(y, m, tau, c)
+        except ValueError:
+            de = 0 # Si la serie es muy corta
+
+        features.append(de)
 
     return np.array(features)
 
