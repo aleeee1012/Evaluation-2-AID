@@ -2,7 +2,7 @@
 
 import numpy  as np
 import pandas as pd
-from utility  import (multiscale_dispersion_entropy, improved_multiscale_dispersion_entropy, multiscale_permutation_entropy, improved_multiscale_permutation_entropy)
+from utility  import softmax
 
 
 # ------ Configuracion y preparación de datos ---------
