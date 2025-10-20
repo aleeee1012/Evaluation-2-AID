@@ -36,8 +36,9 @@ def calculate_metrics(Y_true, Y_pred, n_classes):
         f_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
         f_scores.append(f_score)
     
-    print("\nF-scores por clase:")
-    print(f_scores)
+    print("\nF1-Scores por clase:")
+    for i, score in enumerate(f_scores):
+        print(f"  - Clase #{i+1}: {score:.4f}")
         
     return conf_matrix, np.array(f_scores).reshape(1, -1)
 
