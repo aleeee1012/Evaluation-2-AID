@@ -4,8 +4,8 @@ import numpy  as np
 import pandas as pd
 from utility  import softmax
 
-
 # ------ Configuracion y preparación de datos ---------
+
 def load_train_config():
     # Leer parámetros
     config = pd.read_csv("FUENTES/conf_train.csv", header=None).values.flatten()
@@ -72,7 +72,6 @@ def compute_cost(Y_hat, Y):
     cost = - (1 / m) * np.sum(Y * np.log(Y_hat + 1e-9))
     return cost
 
-
 # -------- Funcion entrenamiento con mGD -----------
 
 def train(X, Y, max_iter, learning_rate, beta):
@@ -121,7 +120,6 @@ def train(X, Y, max_iter, learning_rate, beta):
     # Combinar pesos y sesgo en una sola matriz para guardarlos
     final_weights = np.vstack((W, b))
     return final_weights, cost_history
-
 
 
 # Beginning ...

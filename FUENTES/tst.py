@@ -2,8 +2,10 @@
 import numpy as np
 import pandas as pd
 from utility import softmax
+from ppr import conf_entropy # Solo para ver los resultados mas ordenados
 
 # ------ Cálculo de Métricas de Evaluación ---------
+
 def calculate_metrics(Y_true, Y_pred, n_classes):
     # Matriz de Confusión
     conf_matrix = np.zeros((n_classes, n_classes), dtype=int)
@@ -68,6 +70,13 @@ def main():
     Y_hat = softmax(Z)
     # La predicción final es la clase con la probabilidad más alta
     Y_pred = np.argmax(Y_hat, axis=1)
+
+    opt, lF, d, tau, c, Smax = conf_entropy()
+
+    # Mostrar tipo de entropía antes de procesar
+    print("--------------------------------------------------")
+    print(f"Tipo de Entropía seleccionada: {opt}")
+    print("--------------------------------------------------")
 
     # Calcular métricas de rendimiento
     n_classes = Y_test.shape[1]

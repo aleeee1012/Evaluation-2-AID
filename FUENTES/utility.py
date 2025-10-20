@@ -205,7 +205,6 @@ def improved_multiscale_permutation_entropy(x, m, tau, Smax):
 
     return np.array(empe)
 
-
 # --------------- Softmax function -----------------
 
 def softmax(z):
