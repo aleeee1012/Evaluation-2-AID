@@ -12,13 +12,13 @@ def conf_entropy():
     opt_code = int(config[0])  # 1 = Dispersión, 2 = Disp-Mejorada, 3 = Permutación, 4 = Perm-Mejorada
 
     if opt_code == 1:
-        opt = 'dispersion'
+        opt = 'MDE'
     elif opt_code == 2:
-        opt = 'dispersion-mejorada'
+        opt = 'eMDE'
     elif opt_code == 3:
-        opt = 'permutación'
+        opt = 'MPE'
     elif opt_code == 4:
-        opt = 'permutación-mejorada'
+        opt = 'eMPE'
     else:
         raise ValueError(f"conf_ppr.csv: opción de entropía inválida ({opt_code}). Elija entre las siguientes opciones de Entropía Multi-escala: 1.- Dispersión | 2.- Dispersión Mejorada | 3.- Permutación | 4.- Permutación Mejorada")
     
