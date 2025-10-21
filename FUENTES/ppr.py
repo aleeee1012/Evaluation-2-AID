@@ -69,13 +69,13 @@ def gets_features(opt, lF, d, tau, c, Smax, all_data):
                 
                 # Multi escala
                 try:
-                    if opt == 'dispersion':
+                    if opt == 'MDE':
                         features_vector = multiscale_dispersion_entropy(segment, m=d, tau=tau, c=c, Smax=Smax)
-                    elif opt == 'dispersion-mejorada':
+                    elif opt == 'eMDE':
                         features_vector = improved_multiscale_dispersion_entropy(segment, m=d, tau=tau, c=c, Smax=Smax)
-                    elif opt == 'permutación':
+                    elif opt == 'MPE':
                         features_vector = multiscale_permutation_entropy(segment, m=d, tau=tau, Smax=Smax)
-                    elif opt == 'permutación-mejorada':
+                    elif opt == 'eMPE':
                         features_vector = improved_multiscale_permutation_entropy(segment, m=d, tau=tau, Smax=Smax)
                     else:
                         raise ValueError(f"Opción de entropía inválida: {opt}")
