@@ -1,7 +1,6 @@
 # Testing for Softmax Regresion
 import numpy as np
 import pandas as pd
-from utility import softmax
 from ppr import conf_entropy # Solo para ver los resultados mas ordenados
 
 # ------ Cálculo de Métricas de Evaluación ---------
@@ -44,6 +43,20 @@ def calculate_metrics(Y_true, Y_pred, n_classes):
         
     return conf_matrix, np.array(f_scores).reshape(1, -1)
 
+# --------------- Softmax function -----------------
+def softmax(z):
+    # Se resta el máximo de z para estabilidad numérica y evitar 'overflow'
+    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+
+def softmax(z):
+    exp_z = np.exp(z-np.max(z))
+    return(exp_z/exp_z.sum(axis=0,keepdims=True))
+
+def my_softmax(x,w):
+    z= w@x
+    return softmax(z) 
+
 # Beginning ...
 def main():
     print("Evaluación de Rendimiento...")
@@ -53,6 +66,7 @@ def main():
     try:
         X_test = pd.read_csv('dtst.csv', header=None).values
         Y_test = pd.read_csv('dtst_label.csv', header=None).values
+
         # Cargar pesos y separar W (pesos) de b (sesgo)
         pesos_b = pd.read_csv('pesos.csv', header=None).values
         W = pesos_b[:-1, :] # Todas las filas excepto la última
@@ -64,10 +78,13 @@ def main():
 
     # Obtener los valores estimados usando Regresión Softmax
     print("Realizando predicciones en el conjunto de prueba...")
+
     # Calcular scores
     Z = np.dot(X_test, W) + b
+
     # Aplicar softmax
     Y_hat = softmax(Z)
+
     # La predicción final es la clase con la probabilidad más alta
     Y_pred = np.argmax(Y_hat, axis=1)
 
