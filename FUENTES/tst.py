@@ -1,6 +1,8 @@
 # Testing for Softmax Regresion
+
 import numpy as np
 import pandas as pd
+from utility  import my_softmax
 from ppr import conf_entropy # Solo para ver los resultados mas ordenados
 
 # ------ Cálculo de Métricas de Evaluación ---------
@@ -43,16 +45,6 @@ def calculate_metrics(Y_true, Y_pred, n_classes):
         
     return conf_matrix, np.array(f_scores).reshape(1, -1)
 
-# --------------- Softmax function -----------------
-
-def softmax(z):
-    exp_z = np.exp(z-np.max(z))
-    return(exp_z/exp_z.sum(axis = 0,keepdims = True))
-
-def my_softmax(x,w):
-    z= w @ x
-    return softmax(z) 
-
 # Beginning ...
 def main():
     print("Evaluación de Rendimiento...")
@@ -82,7 +74,7 @@ def main():
     #Y_hat = softmax(Z)
 
     Y_hat = []
-    
+
     for x in X_test:
         x = x.reshape(-1, 1)  # Convertir a columna
         probs = my_softmax(x, W.T) + b.reshape(-1, 1)  # Ajuste para sesgo

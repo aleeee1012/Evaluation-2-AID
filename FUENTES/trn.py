@@ -2,7 +2,7 @@
 
 import numpy  as np
 import pandas as pd
-from utility  import softmax
+from utility  import my_softmax
 
 # ------ Configuracion y preparación de datos ---------
 
@@ -61,11 +61,6 @@ def prepare_data(train_percentage):
 
 # ------ Funciones Modelo Softmax ---------
 
-def softmax(z):
-    # Se resta el máximo de z para estabilidad numérica y evitar 'overflow'
-    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
-    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
-
 def compute_cost(Y_hat, Y):
     m = Y.shape[0]
     # Se suma epsilon para evitar el log(0).
@@ -90,8 +85,17 @@ def train(X, Y, max_iter, learning_rate, beta):
 
     for i in range(max_iter):
         # --- Forward Propagation) ---
-        Z = np.dot(X, W) + b
-        Y_hat = softmax(Z)
+        #Z = np.dot(X, W) + b
+        #Y_hat = softmax(Z)
+
+        Y_hat = []
+    
+        for x in X:
+            x = x.reshape(-1, 1)  # Convertir a columna
+            probs = my_softmax(x, W.T) + b.reshape(-1, 1)  # Ajuste para sesgo
+            Y_hat.append(probs.ravel())  # Convertir a fila
+
+        Y_hat = np.array(Y_hat)
 
         # --- Cálculo del Costo ---
         cost = compute_cost(Y_hat, Y)
