@@ -209,7 +209,7 @@ def improved_multiscale_permutation_entropy(x, m, tau, Smax):
 
 def softmax(z):
     exp_z = np.exp(z-np.max(z))
-    return(exp_z/exp_z.sum(axis = 0,keepdims = True))
+    return(exp_z/exp_z.sum(axis = 1,keepdims = True))
 
 def my_softmax(x,w):
     z= w @ x
