@@ -44,17 +44,13 @@ def calculate_metrics(Y_true, Y_pred, n_classes):
     return conf_matrix, np.array(f_scores).reshape(1, -1)
 
 # --------------- Softmax function -----------------
-def softmax(z):
-    # Se resta el máximo de z para estabilidad numérica y evitar 'overflow'
-    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
-    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
 
 def softmax(z):
     exp_z = np.exp(z-np.max(z))
-    return(exp_z/exp_z.sum(axis=0,keepdims=True))
+    return(exp_z/exp_z.sum(axis = 0,keepdims = True))
 
 def my_softmax(x,w):
-    z= w@x
+    z= w @ x
     return softmax(z) 
 
 # Beginning ...
@@ -80,10 +76,20 @@ def main():
     print("Realizando predicciones en el conjunto de prueba...")
 
     # Calcular scores
-    Z = np.dot(X_test, W) + b
+    #Z = np.dot(X_test, W) + b
 
     # Aplicar softmax
-    Y_hat = softmax(Z)
+    #Y_hat = softmax(Z)
+
+    Y_hat = []
+    
+    for x in X_test:
+        x = x.reshape(-1, 1)  # Convertir a columna
+        probs = my_softmax(x, W.T) + b.reshape(-1, 1)  # Ajuste para sesgo
+        Y_hat.append(probs.ravel())  # Convertir a fila
+
+    Y_hat = np.array(Y_hat)
+
 
     # La predicción final es la clase con la probabilidad más alta
     Y_pred = np.argmax(Y_hat, axis=1)
