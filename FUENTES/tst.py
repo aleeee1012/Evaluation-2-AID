@@ -2,7 +2,7 @@
 
 import numpy as np
 import pandas as pd
-from utility  import my_softmax
+from utility  import softmax
 from ppr import conf_entropy # Solo para ver los resultados mas ordenados
 
 # ------ Cálculo de Métricas de Evaluación ---------
@@ -68,20 +68,10 @@ def main():
     print("Realizando predicciones en el conjunto de prueba...")
 
     # Calcular scores
-    #Z = np.dot(X_test, W) + b
+    Z = np.dot(X_test, W) + b
 
     # Aplicar softmax
-    #Y_hat = softmax(Z)
-
-    Y_hat = []
-
-    for x in X_test:
-        x = x.reshape(-1, 1)  # Convertir a columna
-        probs = my_softmax(x, W.T) + b.reshape(-1, 1)  # Ajuste para sesgo
-        Y_hat.append(probs.ravel())  # Convertir a fila
-
-    Y_hat = np.array(Y_hat)
-
+    Y_hat = softmax(Z)
 
     # La predicción final es la clase con la probabilidad más alta
     Y_pred = np.argmax(Y_hat, axis=1)

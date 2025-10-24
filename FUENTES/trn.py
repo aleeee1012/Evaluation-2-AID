@@ -2,7 +2,7 @@
 
 import numpy  as np
 import pandas as pd
-from utility  import my_softmax
+from utility  import softmax
 
 # ------ Configuracion y preparación de datos ---------
 
@@ -85,17 +85,8 @@ def train(X, Y, max_iter, learning_rate, beta):
 
     for i in range(max_iter):
         # --- Forward Propagation) ---
-        #Z = np.dot(X, W) + b
-        #Y_hat = softmax(Z)
-
-        Y_hat = []
-    
-        for x in X:
-            x = x.reshape(-1, 1)  # Convertir a columna
-            probs = my_softmax(x, W.T) + b.reshape(-1, 1)  # Ajuste para sesgo
-            Y_hat.append(probs.ravel())  # Convertir a fila
-
-        Y_hat = np.array(Y_hat)
+        Z = np.dot(X, W) + b
+        Y_hat = softmax(Z)
 
         # --- Cálculo del Costo ---
         cost = compute_cost(Y_hat, Y)
